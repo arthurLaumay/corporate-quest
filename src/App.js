@@ -116,7 +116,7 @@ function ColleagueGame() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitted(true);
-    setGuessResults(null); // Reset results on submit
+    setGuessResults(null); 
   };
 
   const handleGuessChange = (e) => {
@@ -255,7 +255,7 @@ function App() {
   
     return () => {
       if (currentCanvas) {
-        currentCanvas.removeChild(renderer.domElement); // Utilisation de la variable locale
+        currentCanvas.removeChild(renderer.domElement);
       }
     };
   }, []);
