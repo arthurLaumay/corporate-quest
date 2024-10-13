@@ -55,97 +55,287 @@ const quizData = [
   },
 ];
 
+const randomNumber = Math.floor(Math.random() * 100) + 1; 
+
+function NumberGuessingGame() {
+  const [guess, setGuess] = useState('');
+  const [message, setMessage] = useState('');
+  const [attempts, setAttempts] = useState(0);
+
+  const handleGuess = () => {
+    const numGuess = parseInt(guess, 10);
+    setAttempts(attempts + 1);
+
+    if (numGuess === randomNumber) {
+      setMessage(`Bravo ! Vous avez deviné le bon nombre en ${attempts + 1} tentatives !`);
+    } else if (numGuess > randomNumber) {
+      setMessage("Trop haut ! Réessayez.");
+    } else {
+      setMessage("Trop bas ! Réessayez.");
+    }
+  };
+
+  return (
+    <div className="number-guessing-game">
+      <h1>Jeu de devinette de nombre</h1>
+      <p>Devinez un nombre entre 1 et 100 :</p>
+      <input
+        type="number"
+        value={guess}
+        onChange={(e) => setGuess(e.target.value)}
+      />
+      <button onClick={handleGuess}>Valider</button>
+      <p>{message}</p>
+    </div>
+  );
+}
+
+function ColleagueGame() {
+  const [formData, setFormData] = useState({
+    name: '',
+    favoriteColor: '',
+    hobby: '',
+    favoriteFood: '',
+    city: ''
+  });
+  const [submitted, setSubmitted] = useState(false);
+  const [guess, setGuess] = useState({
+    name: '',
+    favoriteColor: '',
+    hobby: '',
+    favoriteFood: '',
+    city: ''
+  });
+  const [guessResults, setGuessResults] = useState(null);
+  
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({ ...prevData, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSubmitted(true);
+    setGuessResults(null); // Reset results on submit
+  };
+
+  const handleGuessChange = (e) => {
+    const { name, value } = e.target;
+    setGuess(prevGuess => ({ ...prevGuess, [name]: value }));
+  };
+
+  const checkGuess = () => {
+    const correctGuesses = Object.keys(guess).filter(key => guess[key] === formData[key]).length;
+    setGuessResults({
+      message: `Vous avez deviné ${correctGuesses} sur ${Object.keys(formData).length} correctement.`,
+      correctAnswers: formData
+    });
+  };
+
+  const resetGame = () => {
+    setFormData({ name: '', favoriteColor: '', hobby: '', favoriteFood: '', city: '' });
+    setSubmitted(false);
+    setGuess({ name: '', favoriteColor: '', hobby: '', favoriteFood: '', city: '' });
+    setGuessResults(null);
+  };
+
+  return (
+    <div className="colleague-game">
+      {!submitted ? (
+        <form onSubmit={handleSubmit} className="form-container">
+          <h1>Formulaire de présentation</h1>
+          <div className="form-group">
+            <label>
+              Nom :
+              <input type="text" name="name" onChange={handleFormChange} required />
+            </label>
+            <label>
+              Couleur préférée :
+              <input type="text" name="favoriteColor" onChange={handleFormChange} required />
+            </label>
+            <label>
+              Hobby :
+              <input type="text" name="hobby" onChange={handleFormChange} required />
+            </label>
+            <label>
+              Plat préféré :
+              <input type="text" name="favoriteFood" onChange={handleFormChange} required />
+            </label>
+            <label>
+              Ville d'origine :
+              <input type="text" name="city" onChange={handleFormChange} required />
+            </label>
+          </div>
+          <button type="submit">Soumettre</button>
+        </form>
+      ) : (
+        <div>
+          <h1>Devinez les réponses du collègue</h1>
+          <div className="guess-group">
+            <label>
+              Nom :
+              <input type="text" name="name" onChange={handleGuessChange} />
+            </label>
+            <label>
+              Couleur préférée :
+              <input type="text" name="favoriteColor" onChange={handleGuessChange} />
+            </label>
+            <label>
+              Hobby :
+              <input type="text" name="hobby" onChange={handleGuessChange} />
+            </label>
+            <label>
+              Plat préféré :
+              <input type="text" name="favoriteFood" onChange={handleGuessChange} />
+            </label>
+            <label>
+              Ville d'origine :
+              <input type="text" name="city" onChange={handleGuessChange} />
+            </label>
+          </div>
+          <button onClick={checkGuess}>Vérifier les réponses</button>
+          {guessResults && (
+            <div>
+              <p>{guessResults.message}</p>
+              <p>Réponses correctes :</p>
+              <ul>
+                {Object.entries(guessResults.correctAnswers).map(([key, value]) => (
+                  <li key={key}>{key.charAt(0).toUpperCase() + key.slice(1)} : {value}</li>
+                ))}
+              </ul>
+              <button onClick={resetGame}>Réinitialiser le jeu</button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 function App() {
+  const [selectedGame, setSelectedGame] = useState(null); 
   const [currentLevel, setCurrentLevel] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [showResults, setShowResults] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
   const canvasRef = useRef(null);
 
-  const handleAnswer = (selectedOption) => {
-    const currentQuestionData = quizData[currentLevel].questions[currentQuestion];
-    
-    if (selectedOption === currentQuestionData.answer) {
-      setScore(prevScore => prevScore + 1); // Augmente le score
-    }
-    
-    // Passe à la question suivante
-    if (currentQuestion < quizData[currentLevel].questions.length - 1) {
-      setCurrentQuestion(prevQuestion => prevQuestion + 1);
-    } else {
-      // Passe au niveau suivant ou termine le jeu
-      if (currentLevel < quizData.length - 1) {
-        setCurrentLevel(prevLevel => prevLevel + 1);
-        setCurrentQuestion(0); // Réinitialiser les questions
-      } else {
-        setShowResults(true); // Afficher les résultats
-      }
-    }
-  };
-
   useEffect(() => {
+    const currentCanvas = canvasRef.current; 
+  
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer();
-    
+    const renderer = new THREE.WebGLRenderer({ alpha: true });
+  
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(new THREE.Color(0x23373f), 0);
-    canvasRef.current.appendChild(renderer.domElement);
-
-    const geometry = new THREE.BoxGeometry(1, 1, 1); // Taille du cube à 1 unité
+    renderer.setClearColor(0x23373f, 1);
+  
+    currentCanvas.appendChild(renderer.domElement); 
+  
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
     const textureLoader = new THREE.TextureLoader();
-    const texture = textureLoader.load(`${process.env.PUBLIC_URL}/face_cube.png`); // Chemin de l'image
-    const material = new THREE.MeshBasicMaterial({ map: texture }); // Appliquer la texture
-
+    const texture = textureLoader.load('/face_cube.png');
+    const material = new THREE.MeshBasicMaterial({ map: texture });
+  
     const cube = new THREE.Mesh(geometry, material);
     scene.add(cube);
-
+  
     camera.position.z = 5;
-
+  
     const animate = function () {
       requestAnimationFrame(animate);
       cube.rotation.x += 0.01;
       cube.rotation.y += 0.01;
       renderer.render(scene, camera);
     };
-
+  
     animate();
-
-    const cleanupRef = canvasRef.current; // Copier la référence pour le nettoyage
-
+  
     return () => {
-      if (cleanupRef) {
-        while (cleanupRef.firstChild) {
-          cleanupRef.removeChild(cleanupRef.firstChild);
-        }
+      if (currentCanvas) {
+        currentCanvas.removeChild(renderer.domElement); // Utilisation de la variable locale
       }
     };
   }, []);
+  
+
+  const handleAnswer = (option) => {
+    setSelectedOption(option);
+    const correctAnswer = quizData[currentLevel].questions[currentQuestion].answer;
+
+    if (option === correctAnswer) {
+      setScore(prevScore => prevScore + 1);
+    }
+
+    setTimeout(() => {
+      if (currentQuestion < quizData[currentLevel].questions.length - 1) {
+        setCurrentQuestion(prevQuestion => prevQuestion + 1);
+      } else {
+        if (currentLevel < quizData.length - 1) {
+          setCurrentLevel(prevLevel => prevLevel + 1);
+          setCurrentQuestion(0);
+        } else {
+          setShowResults(true);
+        }
+      }
+      setSelectedOption(null);
+    }, 1000);
+  };
 
   return (
     <div className="App">
-      <div className="canvas-container" ref={canvasRef} /> {/* Canevas en arrière-plan */}
-      {showResults ? (
-        <div className="results">
-          <h1>Fin du Jeu</h1>
-          <p>Votre score est : {score}</p>
+      <div ref={canvasRef} className="canvas-container" />
+      {selectedGame === null ? (
+        <div className="game-selection">
+          <h1>Choisissez un jeu</h1>
+          <button onClick={() => setSelectedGame("quiz")}>Quiz Connaissance</button>
+          <button onClick={() => setSelectedGame("colleagueGame")}>Connaitre sont collègues</button>
+          <button onClick={() => setSelectedGame("numberGuessing")}>Devine nombre</button>
         </div>
+      ) : selectedGame === "quiz" ? (
+        <div>
+          {showResults ? (
+            <div className="results">
+              <h1>Partie terminée</h1>
+              <p>Votre score est : {score}</p>
+            </div>
+          ) : (
+            <div className="level-indicator">
+              <h1>Niveau {currentLevel + 1}</h1>
+              <h2>{quizData[currentLevel].questions[currentQuestion].question}</h2>
+              <div>
+                {quizData[currentLevel].questions[currentQuestion].options.map((option, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleAnswer(option)}
+                    style={{
+                      backgroundColor: selectedOption
+                        ? option === quizData[currentLevel].questions[currentQuestion].answer
+                          ? "green"
+                          : option === selectedOption
+                          ? "red"
+                          : ""
+                        : "",
+                    }}
+                    disabled={selectedOption !== null}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+              <p>Score: {score}</p>
+            </div>
+          )}
+        </div>
+      ) : selectedGame === "numberGuessing" ?(
+        <NumberGuessingGame />
       ) : (
-        <div className="level-indicator">
-          <h1>Niveau {currentLevel + 1}</h1>
-          <h2>{quizData[currentLevel].questions[currentQuestion].question}</h2>
-          <div>
-            {quizData[currentLevel].questions[currentQuestion].options.map((option, index) => (
-              <button key={index} onClick={() => handleAnswer(option)}>
-                {option}
-              </button>
-            ))}
-          </div>
-          <p>Score: {score}</p>
-        </div>
+        <ColleagueGame />
       )}
     </div>
   );
 }
+
 export default App;

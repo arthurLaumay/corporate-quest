@@ -6,17 +6,17 @@
   position: relative; 
   overflow: hidden; 
   color: white;
-  background-color: #23373f;
 }
 
 .canvas-container {
-  position: absolute; 
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
 }
+
 
 .level-indicator {
   text-align: center; 
@@ -47,4 +47,46 @@ button {
 button:hover {
   background-color: rgb(50, 112, 205); /* Couleur au survol */
   transform: scale(1.05); /* Zoom au survol */
+}
+
+.game-selection {
+  text-align: center;
+}
+
+.colleague-game {
+  color: white;
+  padding: 20px;
+}
+
+.form-container {
+  margin-bottom: 20px;
+}
+
+.form-group, .guess-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Espacement entre les champs */
+}
+
+label {
+  display: flex;
+  flex-direction: column; /* Aligner label et input */
+}
+
+label input {
+  margin-top: 5px; /* Espacement entre le label et l'input */
+  padding: 5px; /* Espacement interne pour l'input */
+}
+
+button {
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #4CAF50; /* Couleur verte */
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049; /* Couleur verte plus foncée au survol */
 }
