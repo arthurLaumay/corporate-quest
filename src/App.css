@@ -1,38 +1,50 @@
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  font-family: Arial, sans-serif;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  justify-content: center; 
+  height: 100vh;
+  position: relative; 
+  overflow: hidden; 
   color: white;
+  background-color: #23373f;
 }
 
-.App-link {
-  color: #61dafb;
+.canvas-container {
+  position: absolute; 
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.level-indicator {
+  text-align: center; 
+  z-index: 1;
+}
+
+.results {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  border-radius: 8px;
+}
+
+button {
+  background-color: rgb(66, 133, 244); /* Couleur des boutons */
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 20px 40px;
+  margin: 10px;
+  cursor: pointer;
+  font-size: 20px;
+  transition: background-color 0.3s, transform 0.2s; /* Ajout d'animations */
+}
+
+button:hover {
+  background-color: rgb(50, 112, 205); /* Couleur au survol */
+  transform: scale(1.05); /* Zoom au survol */
 }
